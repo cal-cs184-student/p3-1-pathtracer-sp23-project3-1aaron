@@ -177,17 +177,26 @@ void PathTracer::raytrace_pixel(size_t x, size_t y) {
   // Make a loop that generates num_samples camera rays and traces them
   // through the scene. Return the average Vector3D.
   // You should call est_radiance_global_illumination in this function.
+  Vector3D average = {0.0,0.0,0.0};
+  for (int i = 0; i < ns_aa; i++) {
+      Vector2D sample = gridSampler->get_sample();
+      Ray ray = camera->generate_ray((x + sample[0])/sampleBuffer.w, (y + sample[1])/sampleBuffer.h);
+      average += est_radiance_global_illumination(ray);
+  }
+
+  average = average/ns_aa;
+  sampleBuffer.update_pixel(average, x, y);
 
   // TODO (Part 5):
   // Modify your implementation to include adaptive sampling.
   // Use the command line parameters "samplesPerBatch" and "maxTolerance"
-
+/*
   int num_samples = ns_aa;          // total samples to evaluate
   Vector2D origin = Vector2D(x, y); // bottom left corner of the pixel
 
 
   sampleBuffer.update_pixel(Vector3D(0.2, 1.0, 0.8), x, y);
-  sampleCountBuffer[x + y * sampleBuffer.w] = num_samples;
+  sampleCountBuffer[x + y * sampleBuffer.w] = num_samples; */
 
 
 }

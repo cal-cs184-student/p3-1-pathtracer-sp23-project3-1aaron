@@ -41,7 +41,7 @@
 
 <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2023</h1>
 <h1 align="middle">Project 3-1: Path Tracer</h1>
-<h2 align="middle">YOUR NAME(S)</h2>
+<h2 align="middle">Aaron Shalf</h2>
 
 <!-- Add Website URL -->
 <h2 align="middle">Website URL: <a href="TODO">TODO</a></h2>
@@ -97,7 +97,9 @@ Show images with normal shading for a few small .dae files. -->
   Walk through the ray generation and primitive intersection parts of the rendering pipeline.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    Ray generation involved converting image coordinates into camera space coordinates by projecting them into a plane with a z-value of -1.
+  A ray was then generated using that new point and the camera origin, which was then converted to the world space using a pre-provided coordinate
+  matrix. Once it was possible to generate camera rays, these rays could be tested against primitive objects in the world using geometric formulas.
 </p>
 <br>
 
@@ -105,7 +107,10 @@ Show images with normal shading for a few small .dae files. -->
   Explain the triangle intersection algorithm you implemented in your own words.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    The triangle intersections were calculated by first generating barycentric coordinates for the ray's intersection with the triangle plane using
+  the Moller Trumbore algorithm. Once the barycentric coordinates were produced, checking if the intersection lied within the triangle just depended on
+  making sure each barycentric coordinate was between 0 and 1. If the time of the intersection was between min_time and max_time and the intersection
+  point was within the triangle, then the algorithm could return true.
 </p>
 <br>
 
@@ -117,22 +122,22 @@ Show images with normal shading for a few small .dae files. -->
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/CBspheres.png" align="middle" width="400px"/>
+        <figcaption>CBspheres_lambertian.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/CBgems.png" align="middle" width="400px"/>
+        <figcaption>CBgems.dae</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example3.dae</figcaption>
+        <img src="images/CBcoil.png" align="middle" width="400px"/>
+        <figcaption>CBcoil.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example4.dae</figcaption>
+        <img src="images/cow.png" align="middle" width="400px"/>
+        <figcaption>cow.dae</figcaption>
       </td>
     </tr>
   </table>

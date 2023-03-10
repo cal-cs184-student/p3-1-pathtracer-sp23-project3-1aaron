@@ -7,6 +7,7 @@
 #include "CGL/misc.h"
 #include "CGL/vector2D.h"
 #include "CGL/vector3D.h"
+//#include "../../CGL/deps/glfw/src/cocoa_platform.h"
 
 using std::cout;
 using std::endl;
@@ -195,9 +196,20 @@ Ray Camera::generate_ray(double x, double y) const {
   // Note: hFov and vFov are in degrees.
   //
 
+  double hfov = 2 * PI * hFov/360.0;
+  double vfov = 2 * PI * vFov/360.0;
+  Vector3D camerapoint = Vector3D((x - 0.5) * 2 * tan(hfov/2), (y - 0.5) * 2 * tan(vfov/2), -1);
+  Ray cameraray = Ray(c2w*pos, c2w * camerapoint);
 
-  return Ray(pos, Vector3D(0, 0, -1));
+  cameraray.min_t = nClip;
+  cameraray.max_t = fClip;
 
+  //double data[16] = {c2w[0][0], c2w[0][1], c2w[0][2], 0, c2w[1][0], c2w[1][1], c2w[1][2], 0, c2w[2][0], c2w[2][1], c2w[2][2], 0, 0, 0, 0, 1};
+  //Matrix4x4 trans(data);
+  //cameraray = cameraray.transform_by(trans);
+  cameraray.d.normalize();
+
+  return cameraray;
 }
 
 } // namespace CGL
