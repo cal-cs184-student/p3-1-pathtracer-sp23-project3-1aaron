@@ -27,9 +27,19 @@ bool Triangle::has_intersection(const Ray &r) const {
   // The difference between this function and the next function is that the next
   // function records the "intersection" while this function only tests whether
   // there is a intersection.
-
-
-  return true;
+  Vector3D tb_vect;
+  Vector3D E1 = p2 - p1;
+  Vector3D E2 = p3 - p1;
+  Vector3D S = r.o - p1;
+  Vector3D S1 = cross(r.d, E2);
+  Vector3D S2 = cross(S, E1);
+  tb_vect = (1 / (dot(S1, E1))) * Vector3D(dot(S2, E2), dot(S1, S), dot(S2, r.d));
+  if (tb_vect[1] >= 0 && tb_vect[2] >= 0 && (1-tb_vect[1]-tb_vect[2]) >= 0
+        && tb_vect[0] <= r.max_t && tb_vect[0] >= r.min_t) {
+      r.max_t = tb_vect[0];
+      return true;
+  }
+  return false;
 
 }
 
@@ -37,8 +47,24 @@ bool Triangle::intersect(const Ray &r, Intersection *isect) const {
   // Part 1, Task 3:
   // implement ray-triangle intersection. When an intersection takes
   // place, the Intersection data should be updated accordingly
-
-
+  if (!has_intersection(r)) {
+      return false;
+  } else {
+      Vector3D tb_vect;
+      Vector3D E1 = p2 - p1;
+      Vector3D E2 = p3 - p1;
+      Vector3D S = r.o - p1;
+      Vector3D S1 = cross(r.d, E2);
+      Vector3D S2 = cross(S, E1);
+      tb_vect = (1 / (dot(S1, E1))) * Vector3D(dot(S2, E2), dot(S1, S), dot(S2, r.d));
+      double b = tb_vect[1];
+      double c = tb_vect[2];
+      double a = 1 - b - c;
+      isect->t = tb_vect[0];
+      isect->n = a*n1 + b*n2 + c*n3;
+      isect->primitive = this;
+      isect->bsdf = get_bsdf();
+  }
   return true;
 
 
