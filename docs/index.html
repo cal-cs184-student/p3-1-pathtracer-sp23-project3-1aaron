@@ -154,7 +154,12 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   Walk through your BVH construction algorithm. Explain the heuristic you chose for picking the splitting point.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+  My BVH was constructed by creating a bounding box out of all primitives in the node, then determining whether or not the node should become a leaf. If there were over
+  max_leaf_size primitives, the node would become an inner node and I'd sort all the primitives along an axis then split them into left/right based on my heuristic. If it
+  was a leaf node, then the primitives just needed to be set in node.start and node.end.
+    I chose the splitting point as the mean of the centroids of all primitives in the shape. Although this might be biased by outlier primitives,
+  It is simplest to implement, as we already iterate through all of the primitives to generate the bounding box. For the axis, I chose whichever axis had the larger
+  extent, or which dimension of the box was longest. This was to make sure the boxes were relatively compact.
 </p>
 
 <h3>
@@ -165,12 +170,12 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/max.png" align="middle" width="400px"/>
+        <figcaption>maxplanck.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/CBLucy.png" align="middle" width="400px"/>
+        <figcaption>CBLucy.dae</figcaption>
       </td>
     </tr>
     <tr align="center">

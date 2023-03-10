@@ -39,7 +39,10 @@ bool Triangle::has_intersection(const Ray &r) const {
   double c = tb_vect[2];
   double a = 1.0 - b - c;
   double t = tb_vect[0];
-  if (a >= 0 && a <= 1 && b >= 0 && b <= 1 && c >= 0 && c <= 1 && t < r.max_t && t > r.min_t && t >= 0) {
+  //cout<<t<<endl;
+  //cout<<r.max_t<<endl;
+  //cout<<(a >= 0 && b >= 0 && c >= 0) <<endl;
+  if (a >= 0 && a <= 1 && b >= 0 && b <= 1 && c >= 0 && c <= 1 && t <= r.max_t && t >= r.min_t && t >= 0) {
       r.max_t = t;
       return true;
   }
@@ -53,6 +56,7 @@ bool Triangle::intersect(const Ray &r, Intersection *isect) const {
   // place, the Intersection data should be updated accordingly
 
   if (!has_intersection(r)) {
+      //cout<<"no intersection"<<endl;
       return false;
   } else {
       Vector3D tb_vect;
