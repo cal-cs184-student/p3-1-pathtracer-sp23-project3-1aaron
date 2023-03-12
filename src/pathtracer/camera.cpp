@@ -199,8 +199,13 @@ Ray Camera::generate_ray(double x, double y) const {
   double hfov = 2 * PI * hFov/360.0;
   double vfov = 2 * PI * vFov/360.0;
   Vector3D camerapoint = Vector3D((x - 0.5) * 2 * tan(hfov/2), (y - 0.5) * 2 * tan(vfov/2), -1);
-  Ray cameraray = Ray(c2w*pos, c2w * camerapoint);
-
+  Ray cameraray = Ray({0,0,0},  camerapoint);
+  Matrix4x4 newc2w;
+  newc2w[0] = Vector4D(c2w[0], 0);
+  newc2w[1] = Vector4D(c2w[1], 0);
+  newc2w[2] = Vector4D(c2w[2], 0);
+  newc2w[3] = Vector4D(pos, 1);
+  cameraray = cameraray.transform_by(newc2w);
   cameraray.min_t = nClip;
   cameraray.max_t = fClip;
 

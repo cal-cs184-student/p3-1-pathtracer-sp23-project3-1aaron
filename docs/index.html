@@ -180,12 +180,12 @@ Compare rendering times on a few scenes with moderately complex geometries with 
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example3.dae</figcaption>
+        <img src="images/blob.png" align="middle" width="400px"/>
+        <figcaption>blob.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example4.dae</figcaption>
+        <img src="images/bench.png" align="middle" width="400px"/>
+        <figcaption>bench.dae</figcaption>
       </td>
     </tr>
   </table>
@@ -196,7 +196,9 @@ Compare rendering times on a few scenes with moderately complex geometries with 
   Compare rendering times on a few scenes with moderately complex geometries with and without BVH acceleration. Present your results in a one-paragraph analysis.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    Without BVH acceleration, many moderately complex to complex geometries would take upwards of several minutes to complete. However after applying BVH acceleration, no single file takes more than a minute
+    to render, in fact the highest time seems to be the space of several seconds. This is due to the fact that the algorithmic complexity has been reduced from O(n) to O(log(n)). Since logarithmic runtimes asymptote
+    at some time value, this is expected behavior. Simple files that would've taken a minute to render take less than a second, and complex ones that would've taken several now take no more than a couple seconds.
 </p>
 <br>
 
@@ -210,7 +212,11 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Walk through both implementations of the direct lighting function.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    There are two approaches to direct lighting: uniform hemisphere sampling, and light importance sampling. Uniform hemipshere sampling uses a pdf with equal probability across all points on the hemisphere. By first
+  generating a randomly sampled vector from this hemisphere and then checking if the ray from that vector intersects any light sources, we can simulate a bounce from that light source to the surface and back to the camera.
+
+  In light importance sampling, we instead sample over the light sources and check if a ray can travel uninterrupted between the light and the surface. Using the rays and light values, we can calculate the radiance on
+  the surface produced by each light source and average over the light sources.
 </p>
 
 <h3>
@@ -231,12 +237,12 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny_64_32.png" align="middle" width="400px"/>
         <figcaption>example1.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/CBbunny_H_64_32.png.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae (hemisphere)</figcaption>
       </td>
     </tr>
     <br>
@@ -246,8 +252,8 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
         <figcaption>example2.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/bunny_64_32.png" align="middle" width="400px"/>
+        <figcaption>CBbunny.dae (light importance)</figcaption>
       </td>
     </tr>
     <br>
@@ -263,28 +269,31 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
+        <img src="images/bunny_1_32.png" align="middle" width="200px"/>
         <figcaption>1 Light Ray (example1.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
+        <img src="images/bunny_4_32.png" align="middle" width="200px"/>
         <figcaption>4 Light Rays (example1.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
+        <img src="images/bunny_16_32.png" align="middle" width="200px"/>
         <figcaption>16 Light Rays (example1.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="200px"/>
+        <img src="images/images/bunny_64_32.png" align="middle" width="200px"/>
         <figcaption>64 Light Rays (example1.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <p>
-    YOUR EXPLANATION GOES HERE
+    As the number of samples increases, the surface reflectance becomes less sensitive to variance with regard to the distance from the sampled light source. Since we
+  take multiple samples for non-point light sources, the randomness comes from the differences in locations along the light source. With lower sampling rates, we increase
+  the chances of accidentally sampling vectors that aren't representative of the lighting of the point, for instance we might sample a shaded point when most of the light
+  actually does reach the point. As the samples increase, we end up accounting more for all of these vectors, which results in more of a shade gradient.
 </p>
 <br>
 
@@ -292,7 +301,11 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
   Compare the results between uniform hemisphere sampling and lighting sampling in a one-paragraph analysis.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    Uniform hemisphere sampling results in much more noise, as it weights samples from every location across the hemisphere evenly. Furthermore, it's not feasible
+  to apply uniform hemisphere sampling to environments with point lights, as the sampled rays will never point directly to the light. Compared to lighting sampling, there are
+  more noisy light points in the environment. Light sampling produces a much more consistent image, to a conspicuous degree. For instance, the ceiling is always pitch black
+  in a single bounce light sampled image, because the rays between that surface and the light are always considered shadowed. Overall, light sampling is smoother and
+  more consistent with the geometries, but has a somewhat overproduced and artificial look to it.
 </p>
 <br>
 
