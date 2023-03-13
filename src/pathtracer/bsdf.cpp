@@ -69,7 +69,7 @@ Vector3D DiffuseBSDF::sample_f(const Vector3D wo, Vector3D *wi, double *pdf) {
   // You can use the `f` function. The reference solution only takes two lines.
 
   *wi = sampler.get_sample();
-  *pdf = 1/(2*PI);
+  *pdf = 1.0/(2.0*PI);
   return f(wo, *wi);
 }
 

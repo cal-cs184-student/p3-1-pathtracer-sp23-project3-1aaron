@@ -80,7 +80,7 @@ PathTracer::estimate_direct_lighting_hemisphere(const Ray &r,
       ray.max_t = (r.o - hit_p).norm() - EPS_F;
       Intersection inter;
       if (bvh->intersect(ray, &inter)) {
-          double pdf = 1/(2*PI);
+          double pdf = 1.0/(2*PI);
           L_out += isect.bsdf->f(w_out, wi) * inter.bsdf->get_emission() * (wi).z/ pdf;
       }
   }
@@ -178,8 +178,26 @@ Vector3D PathTracer::at_least_one_bounce_radiance(const Ray &r,
   // TODO: Part 4, Task 2
   // Returns the one bounce radiance + radiance from extra bounces at this point.
   // Should be called recursively to simulate extra bounces.
-
-
+  double continuation_prob = 0.35;
+  if (r.depth == 0) {
+      return zero_bounce_radiance(r, isect);
+  } else if (r.depth == 1) {
+      return one_bounce_radiance(r, isect);
+  }
+  L_out = one_bounce_radiance(r, isect);
+  if (coin_flip(continuation_prob)) {
+      Vector3D wi;
+      double pdf;
+      Intersection inter;
+      Vector3D radiance = isect.bsdf->sample_f(w_out, &wi, &pdf);
+      Ray ray = Ray(hit_p, o2w * wi);
+      ray.depth = r.depth - 1;
+      ray.min_t = EPS_F;
+      ray.max_t = (r.o - hit_p).norm() - EPS_F;
+      if (bvh->intersect(ray, &inter)) {
+          L_out += (at_least_one_bounce_radiance(ray, inter) * radiance * (wi).z/pdf)/continuation_prob;
+      }
+  }
   return L_out;
 }
 
@@ -197,14 +215,15 @@ Vector3D PathTracer::est_radiance_global_illumination(const Ray &r) {
   //
   // REMOVE THIS LINE when you are ready to begin Part 3.
 
-  if (!bvh->intersect(r, &isect))
-    return L_out;
+  if (!bvh->intersect(r, &isect)) {
+      return L_out;
+  }
 
 
   L_out = (isect.t == INF_D) ? debug_shading(r.d) : normal_shading(isect.n);
 
   // TODO (Part 3): Return the direct illumination.
-  return zero_bounce_radiance(r, isect) + one_bounce_radiance(r, isect);
+  return zero_bounce_radiance(r, isect) + at_least_one_bounce_radiance(r, isect);
   // TODO (Part 4): Accumulate the "direct" and "indirect"
   // parts of global illumination into L_out rather than just direct
 
@@ -217,25 +236,47 @@ void PathTracer::raytrace_pixel(size_t x, size_t y) {
   // through the scene. Return the average Vector3D.
   // You should call est_radiance_global_illumination in this function.
   Vector3D average = {0.0,0.0,0.0};
+  double s1 = 0;
+  double s2 = 0;
+  int count = 0;
   for (int i = 0; i < ns_aa; i++) {
+      count++;
       Vector2D sample = gridSampler->get_sample();
       Ray ray = camera->generate_ray((x + sample[0])/sampleBuffer.w, (y + sample[1])/sampleBuffer.h);
-      average += est_radiance_global_illumination(ray);
+      ray.depth = max_ray_depth;
+      Vector3D radiance = est_radiance_global_illumination(ray);
+      average += radiance;
+      s1 += radiance.illum();
+      s2 += radiance.illum() * radiance.illum();
+      if (i % samplesPerBatch == 0 && i != 0) {
+          double variance_2 = (1.0 / (i - 1.0)) * (s2 - (s1 * s1/i));
+          //cout<<(s2 - (s1 * s1/i))<<endl;
+          double mean = s1/i;
+          double bigI = 1.96 * std::sqrt(variance_2) / std::sqrt(i);
+          if (bigI <= (maxTolerance * mean)) {
+              //cout<<s2 - (s1*s1/i)<<endl;
+              //cout<<variance_2<<endl;
+              //cout<<" exit"<<endl;
+              break;
+          } else if (i == 64) {
+              //cout <<"didn't break" <<endl;
+          }
+      }
   }
-
-  average = average/ns_aa;
+  average = average / count;
   sampleBuffer.update_pixel(average, x, y);
+  sampleCountBuffer[x + y * sampleBuffer.w] = count;
 
   // TODO (Part 5):
   // Modify your implementation to include adaptive sampling.
   // Use the command line parameters "samplesPerBatch" and "maxTolerance"
-/*
+  /*
   int num_samples = ns_aa;          // total samples to evaluate
   Vector2D origin = Vector2D(x, y); // bottom left corner of the pixel
 
+  average.illum();
+  sampleBuffer.update_pixel(Vector3D(0.2, 1.0, 0.8), x, y); */
 
-  sampleBuffer.update_pixel(Vector3D(0.2, 1.0, 0.8), x, y);
-  sampleCountBuffer[x + y * sampleBuffer.w] = num_samples; */
 
 
 }

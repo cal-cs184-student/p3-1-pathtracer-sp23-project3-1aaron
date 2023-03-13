@@ -59,32 +59,14 @@
   </table>
 </div>
 
-<p>All of the text in your write-up should be <em>in your own words</em>. If you need to add additional HTML features to this document, you can search the <a href="http://www.w3schools.com/">http://www.w3schools.com/</a> website for instructions. To edit the HTML, you can just copy and paste existing chunks and fill in the text and image file names appropriately.</p>
-<o>The website writeup is intended to be a self-contained walkthrough of the assignment: we want this to be a piece of work which showcases your understanding of relevant concepts through both mesh images as well as written explanations about what you did to complete each part of the assignment. Try to be as clear and organized as possible when writing about your own output files or extensions to the assignment. We want to understand what you've achieved and how you've done it!</p> 
-<p>If you are well-versed in web development, feel free to ditch this template and make a better looking page.</p>
-
-
-<p>Here are a few problems students have encountered in the past. Test your website on the instructional machines early!</p>
-<ul>
-<li>Your main report page should be called index.html.</li>
-<li>Be sure to include and turn in all of the other files (such as images) that are linked in your report!</li>
-<li>Use only <em>relative</em> paths to files, such as <pre>"./images/image.jpg"</pre>
-Do <em>NOT</em> use absolute paths, such as <pre>"/Users/student/Desktop/image.jpg"</pre></li>
-<li>Pay close attention to your filename extensions. Remember that on UNIX systems (such as the instructional machines), capitalization matters. <pre>.png != .jpeg != .jpg != .JPG</pre></li>
-<li>Be sure to adjust the permissions on your files so that they are world readable. For more information on this please see this tutorial: <a href="http://www.grymoire.com/Unix/Permissions.html">http://www.grymoire.com/Unix/Permissions.html</a></li>
-<li>And again, test your website on the instructional machines early!</li>
-</ul>
-
-
-<p>Here is an example of how to include a simple formula:</p>
-<p align="middle"><pre align="middle">a^2 + b^2 = c^2</pre></p>
-<p>or, alternatively, you can include an SVG image of a LaTex formula.</p>
-
-<div>
-
 <h2 align="middle">Overview</h2>
 <p>
-    YOUR RESPONSE GOES HERE
+    Over the course of the project, I implemented a ray tracing algorithm that accounts for both direct and indirect illumination, which also involves some optimizations
+  such as bounding volumes and adaptive lighting. The simplest and most basic ray tracing just involves determining if any rays travel directly from the light sources to
+  the camera. Translating from the world space to the image space mainly involved coordinate space transformations, which allowed the casting of rays from the camera into
+  the world. Once we could cast rays, we could recursively bounce them around the scene to accumulate reflective lighting. Algorithms such as adaptive lighting and Russian
+  Roulette were implemented to make sure no infinite recursion or unnecessary bounces occurred. Furthermore, scenes were initialized into bounding volumes to further reduce
+  the number of intersections that needed to be calculated. Together, these enabled the rendering of scenes in a manner fairly similar to real-world behavior.
 </p>
 <br>
 
@@ -237,19 +219,19 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
     <br>
     <tr align="center">
       <td>
-        <img src="images/bunny_64_32.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/spheres_64_32.png" align="middle" width="400px"/>
+        <figcaption>spheres.dae (hemisphere)</figcaption>
       </td>
       <td>
-        <img src="images/CBbunny_H_64_32.png.png" align="middle" width="400px"/>
+        <img src="images/CBbunny_H_64_32.png" align="middle" width="400px"/>
         <figcaption>CBbunny.dae (hemisphere)</figcaption>
       </td>
     </tr>
     <br>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/spheres_no_H_64_32.png" align="middle" width="400px"/>
+        <figcaption>spheres.dae (light importance)</figcaption>
       </td>
       <td>
         <img src="images/bunny_64_32.png" align="middle" width="400px"/>
@@ -283,7 +265,7 @@ Compare the results between uniform hemisphere sampling and lighting sampling in
         <figcaption>16 Light Rays (example1.dae)</figcaption>
       </td>
       <td>
-        <img src="images/images/bunny_64_32.png" align="middle" width="200px"/>
+        <img src="images/bunny_64_32.png" align="middle" width="200px"/>
         <figcaption>64 Light Rays (example1.dae)</figcaption>
       </td>
     </tr>
@@ -322,7 +304,9 @@ You will probably want to use the instructional machines for the above renders i
   Walk through your implementation of the indirect lighting function.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    The indirect lighting function makes use of the direct lighting functions to trace rays and determine the overall illuminance. The primary difference is the recursion. The base cases, where the max ray depth is 1 or 0, result
+  in one_bounce or zero_bounce lighting respectively. Else-wise, we determine the one bounce radiance, then trace a new ray to another random direction and recursively determine the radiance contributed by that direction. Since this
+  is probabilistic, we weight the new contributing rays by their probability and determine the radiance using sample_f.
 </p>
 <br>
 
@@ -334,12 +318,12 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example1.dae</figcaption>
+        <img src="images/spheres1024.png" align="middle" width="400px"/>
+        <figcaption>spheres.dae</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>example2.dae</figcaption>
+        <img src="images/bunny1024_d3.png" align="middle" width="400px"/>
+        <figcaption>bunny.dae</figcaption>
       </td>
     </tr>
   </table>
@@ -354,19 +338,23 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Only direct illumination (example1.dae)</figcaption>
+        <img src="images/spheres1024d.png" align="middle" width="400px"/>
+        <figcaption>Only direct illumination (spheres.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Only indirect illumination (example1.dae)</figcaption>
+        <img src="images/spheres1024only_ind.png" align="middle" width="400px"/>
+        <figcaption>Only indirect illumination (spheres.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    Direct illumination just uses the parts determined by Part 3, or one bounce and zero bounce illuminance. This results in only the rays directly cast to the surfaces from the light contributing
+  to the resulting illuminance, and therefore the shaded regions receive no light and are completely dark. The ceiling also doesn't receive any lighting, as the rays aren't allowed to reflect back to it.
+
+  In the direct lighting case, only the contributions made from >=1 bounces are incorporated, resulting in much more distributed lighting (as all reflection angles can be accounted for). Since none of the
+  rays are weighted as heavily as the one/zero bounce rays, there are slightly less defined shapes and borders.
 </p>
 <br>
 
@@ -378,27 +366,27 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny1024_d0.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 0 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny1024_d1.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 1 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny1024_d2.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 2 (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny1024_d3.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 3 (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
+        <img src="images/bunny1024_d100.png" align="middle" width="400px"/>
         <figcaption>max_ray_depth = 100 (CBbunny.dae)</figcaption>
       </td>
     </tr>
@@ -406,7 +394,9 @@ You will probably want to use the instructional machines for the above renders i
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    Max ray depths of 0 and 1 result in zero bounce and one bounce illumination respectively. Further than that provides more ambient lighting, which results in more color reflections and less
+  strict shadowing. Although 2 bounces and 3 bounces result in visible differences, the difference between 3 bounces and 100 isn't linear with the max depth size, as russian roulette results in
+  most rays terminating before they reach 100 bounces, which wouldn't contribute a relatively large amount of light anyways.
 </p>
 <br>
 
@@ -418,45 +408,48 @@ You will probably want to use the instructional machines for the above renders i
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>1 sample per pixel (example1.dae)</figcaption>
+        <img src="images/spheres1_4.png" align="middle" width="400px"/>
+        <figcaption>1 sample per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>2 samples per pixel (example1.dae)</figcaption>
-      </td>
-    </tr>
-    <tr align="center">
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>4 samples per pixel (example1.dae)</figcaption>
-      </td>
-      <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>8 samples per pixel (example1.dae)</figcaption>
+        <img src="images/spheres2_4.png" align="middle" width="400px"/>
+        <figcaption>2 samples per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>16 samples per pixel (example1.dae)</figcaption>
+        <img src="images/spheres4_4.png" align="middle" width="400px"/>
+        <figcaption>4 samples per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>64 samples per pixel (example1.dae)</figcaption>
+        <img src="images/spheres8_4.png" align="middle" width="400px"/>
+        <figcaption>8 samples per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>1024 samples per pixel (example1.dae)</figcaption>
+        <img src="images/spheres16_4.png" align="middle" width="400px"/>
+        <figcaption>16 samples per pixel (CBspheres_lambertian.dae)</figcaption>
+      </td>
+      <td>
+        <img src="images/spheres64_4.png" align="middle" width="400px"/>
+        <figcaption>64 samples per pixel (CBspheres_lambertian.dae)</figcaption>
+      </td>
+    </tr>
+    <tr align="center">
+      <td>
+        <img src="images/spheres1024_4.png" align="middle" width="400px"/>
+        <figcaption>1024 samples per pixel (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
   </table>
 </div>
 <br>
 <p>
-    YOUR EXPLANATION GOES HERE
+    Once again, the sample-per-pixel rates control how much variance is experienced in the ray tracing. For low amounts of samples,
+  there is much more variance in the brightness of each pixel regardless of its location, as the rays can bounce in any direction. This results in
+  speckles and inconsistent patterns on the surfaces of the spheres. In contrast, increasing the sampling results in the pixel values converging more to their
+  expected values, which provides a smoother gradient. Visually, this seems to smooth out at around 64 samples per pixel, but only truly disappears at 1024 samples.
 </p>
 <br>
 
@@ -469,7 +462,10 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
   Explain adaptive sampling. Walk through your implementation of the adaptive sampling.
 </h3>
 <p>
-    YOUR RESPONSE GOES HERE
+    Adaptative sampling is something of an optimization for ray tracing. By introducing a termination condition for our sampling, we can increase the overall number of samples we take. The goal is to terminate early
+  for locations whose illuminance converges quickly. For areas that don't converge, we can dedicate more samples to it, resulting in less noisy results. Since the determining factor for terminating is the variance of the samples,
+  we ensure that the variance is under some threshold for each point, we can be 95% confident that the illuminance we assign is correct, unless we reach our upper threshold, which still would involve enough samples to substantially
+  reduce noise. To implement this, I followed the formulas for I, the standard deviation, and the mean, and checked the condition once every sampleBatchSize iterations of the raytracing loop.
 </p>
 <br>
 
@@ -481,22 +477,22 @@ Pick one scene and render it with at least 2048 samples per pixel. Show a good s
   <table style="width:100%">
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Rendered image (example1.dae)</figcaption>
+        <img src="images/bunny_adaptive.png" align="middle" width="400px"/>
+        <figcaption>Rendered image (CBbunny.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Sample rate image (example1.dae)</figcaption>
+        <img src="images/bunny_rate.png" align="middle" width="400px"/>
+        <figcaption>Sample rate image (CBbunny.dae)</figcaption>
       </td>
     </tr>
     <tr align="center">
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Rendered image (example2.dae)</figcaption>
+        <img src="images/spheres_adaptive.png" align="middle" width="400px"/>
+        <figcaption>Rendered image (CBspheres_lambertian.dae)</figcaption>
       </td>
       <td>
-        <img src="images/your_file.png" align="middle" width="400px"/>
-        <figcaption>Sample rate image (example2.dae)</figcaption>
+        <img src="images/spheres_adaptive_rate.png" align="middle" width="400px"/>
+        <figcaption>Sample rate image (CBspheres_lambertian.dae)</figcaption>
       </td>
     </tr>
   </table>
